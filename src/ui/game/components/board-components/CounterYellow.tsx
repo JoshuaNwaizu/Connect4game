@@ -48,9 +48,9 @@ const CounterYellow = () => {
       <g
         id="Designs"
         stroke="none"
-        stroke-width="1"
+        strokeWidth="1"
         fill="none"
-        fill-rule="evenodd"
+        fillRule="evenodd"
       >
         <g id="counter-yellow-small" transform="translate(0.975610, 0.975610)">
           <circle
@@ -71,7 +71,7 @@ const CounterYellow = () => {
             <use fill="#FFCE67" fill-rule="evenodd" xlinkHref="#path-1"></use>
             <use
               fill="black"
-              fill-opacity="1"
+              fillOpacity="1"
               filter="url(#filter-2)"
               xlinkHref="#path-1"
             ></use>

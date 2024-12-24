@@ -1,11 +1,16 @@
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Home from "./ui/home/Home";
 import GamePage from "./ui/game/GamePage";
-// import Home from "./ui/home/Home";
 
+const router = createBrowserRouter([
+  { path: "/", element: <Home /> },
+  { path: "game-page", element: <GamePage /> },
+]);
 const App = () => {
   return (
-    <div>
-      <GamePage />
-    </div>
+    <>
+      <RouterProvider router={router} />
+    </>
   );
 };
 

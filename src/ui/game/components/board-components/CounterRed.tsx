@@ -48,9 +48,9 @@ const CounterRed = () => {
       <g
         id="Designs"
         stroke="none"
-        stroke-width="1"
+        strokeWidth="1"
         fill="none"
-        fill-rule="evenodd"
+        fillRule="evenodd"
       >
         <g id="assets" transform="translate(-231.000000, -744.000000)">
           <g id="Group-24" transform="translate(211.000000, 160.000000)">
@@ -75,7 +75,7 @@ const CounterRed = () => {
               <g id="Oval-Copy-48">
                 <use
                   fill="#FD6687"
-                  fill-rule="evenodd"
+                  fillRule="evenodd"
                   xlinkHref="#path-1"
                 ></use>
                 <use

@@ -1,40 +1,59 @@
-import { useState } from "react";
 import BoardWhite from "./board-components/BoardWhite";
 import BoardBlack from "./board-components/BoardBlack";
 import CounterRed from "./board-components/CounterRed";
 import CounterYellow from "./board-components/CounterYellow";
 import { useConnect4 } from "../../contexts/Connect4Context";
+import { useEffect } from "react";
 
 const ConnectFourBoard = () => {
-  const { dispatch, gameBoard, currentPlayer } = useConnect4();
+  const {
+    dispatch,
+    gameBoard,
+    currentPlayer,
+    winner,
+    timer,
+    paused,
+    winningCells,
+  } = useConnect4();
 
-  const handleDrop = (column: number) => {
-    dispatch({ type: "DROP_PIECE", payload: column });
+  const isColumnFilled = (colIndex: number): string | null => {
+    return gameBoard[0][colIndex];
+  };
+  const isWinningCell = (rowIndex: number, colIndex: number): boolean => {
+    return winningCells.some(
+      (cell) => cell.row === rowIndex && cell.col === colIndex,
+    );
   };
 
-  // const columns = 7;
-  // const gameBoardPiece = Array.from({ length: rows }, () =>
-  //   Array(columns).fill(null),
-  // );
-  // const [gameBoard, setGameBoard] =
-  //   useState<(string | null)[][]>(gameBoardPiece);
-  // const [currentPlayer, setCurrentPlayer] = useState<"red" | "yellow">("red");
+  useEffect(() => {
+    if (timer === 0 && !winner) {
+      const availableColumns = gameBoard[0]
+        .map((cell, colIndex) => (cell === null ? colIndex : null))
+        .filter((col) => col !== null);
+      if (availableColumns.length > 0) {
+        const randomColumn =
+          availableColumns[Math.floor(Math.random() * availableColumns.length)];
 
-  // const handleDrop = (column: number) => {
-  //   const newBoard = [...gameBoard];
-  //   for (let row = rows - 1; row >= 0; row--) {
-  //     if (!newBoard[row][column]) {
-  //       newBoard[row][column] = currentPlayer; // Example: red piece for player 1
-  //       break;
-  //     }
-  //   }
-  //   setGameBoard(newBoard);
-  //   setCurrentPlayer(currentPlayer === "red" ? "yellow" : "red"); // Switch player
-  //   console.log(gameBoard);
-  // };
+        dispatch({ type: "DROP_PIECE", payload: randomColumn });
+      }
+
+      dispatch({ type: "TIMER", payload: 15 });
+    }
+    const interval: number = setInterval(() => {
+      if (!paused && !winner) {
+        dispatch({ type: "TIMER", payload: timer - 1 });
+      }
+    }, 1000);
+    console.log(timer);
+    return () => clearInterval(interval);
+  }, [timer, gameBoard, dispatch, paused]);
+
+  useEffect(() => {
+    dispatch({ type: "TIMER", payload: 15 });
+  }, [currentPlayer]);
 
   return (
-    <div className="relative flex flex-col items-center justify-center mt-9">
+    <div className="relative flex flex-col items-center justify-center">
       <BoardWhite>
         {/* Generate Circles for the Board */}
         {gameBoard.map((row, rowIndex) =>
@@ -47,7 +66,12 @@ const ConnectFourBoard = () => {
                 r="20"
                 fill={"transparent"}
                 stroke="#000000"
-                onClick={() => handleDrop(colIndex)} // Handle piece placement
+                onClick={() => {
+                  if (isColumnFilled(colIndex)) {
+                    return;
+                  }
+                  dispatch({ type: "DROP_PIECE", payload: colIndex });
+                }}
                 className="cursor-pointer"
               />
             </>
@@ -59,24 +83,17 @@ const ConnectFourBoard = () => {
         {gameBoard.map((row, rowIndex) =>
           row.map((cell, colIndex) => (
             <g
-              className=""
+              className={
+                isWinningCell(rowIndex, colIndex) ? "winning-animation" : ""
+              }
               key={`${rowIndex}-${colIndex}`}
               transform={`translate(${10 + colIndex * 46}, ${
                 10 + rowIndex * 46
               })`}
             >
-              {/* Render the appropriate SVG based on the cell value */}
               {cell === "red" && <CounterRed />}
               {cell === "yellow" && <CounterYellow />}
             </g>
-            // <circle
-            //   key={`${rowIndex}-${colIndex}`}
-            //   cx={26 + colIndex * 47} // Adjust spacing between columns
-            //   cy={27 + rowIndex * 47} // Adjust spacing between rows
-            //   r="20"
-            //   fill={cell || "transparent"} // Default white for empty
-            //   stroke="#000000"
-            // />
           )),
         )}
       </BoardBlack>
