@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 
-interface WhiteBoard {
+export interface WhiteBoard {
   onClick?: () => void;
   children?: ReactNode;
 }

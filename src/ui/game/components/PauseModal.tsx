@@ -32,15 +32,15 @@ const PauseModal = () => {
     <>
       <div
         onClick={handleContinue}
-        className={` ${closeModal ? "flex" : "hidden"} fixed inset-0 z-40 items-center justify-center bg-[#00000080] opacity-90`}
+        className={` ${closeModal ? "flex" : "hidden"} fixed inset-0 z-[50] items-center justify-center bg-[#00000080] opacity-90`}
       ></div>
       <div
-        className={`fixed inset-0 z-40 flex items-center justify-center ${closeModal ? "flex" : "hidden"}`}
+        className={`fixed inset-0 z-[60] flex items-center justify-center ${closeModal ? "flex" : "hidden"}`}
       >
         <Connect4Modal
           title="Pause"
           className="flex flex-col items-center gap-6"
-          modalClassName="bg-[#7945FF] items-center justify-center"
+          modalClassName="bg-[#7945FF] items-center justify-center md:h-[30.6875rem] md:w-[30rem]"
         >
           {buttons.map((button, i) => (
             <Button

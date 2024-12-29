@@ -1,4 +1,11 @@
-import { createContext, ReactNode, useContext, useReducer } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useReducer,
+} from "react";
+
 interface Connect4ContextType {
   gameBoard: (string | null)[][];
   currentPlayer: "red" | "yellow";
@@ -10,18 +17,24 @@ interface Connect4ContextType {
   closeModal: boolean;
   paused: boolean;
   winningCells: Cell[];
+  gameMode: "player" | "cpu";
+  deActivateBoard: boolean;
 }
+
 interface State {
   gameBoard: (string | null)[][];
   currentPlayer: "red" | "yellow";
   winner: null | "red" | "yellow";
   player1Score: number;
-  timer: number;
   player2Score: number;
+  timer: number;
   closeModal: boolean;
   paused: boolean;
   winningCells: Cell[];
+  gameMode: "player" | "cpu";
+  deActivateBoard: boolean;
 }
+
 interface Action {
   type: string;
   payload?: any;
@@ -31,10 +44,12 @@ type Direction = {
   x: number;
   y: number;
 };
+
 type Cell = {
   row: number;
   col: number;
 };
+
 const Connect4Context = createContext<Connect4ContextType | undefined>(
   undefined,
 );
@@ -44,6 +59,7 @@ const columns = 7;
 const gameBoardPiece = Array.from({ length: rows }, () =>
   Array(columns).fill(null),
 );
+
 const initialState: State = {
   gameBoard: gameBoardPiece,
   currentPlayer: "red",
@@ -54,7 +70,11 @@ const initialState: State = {
   closeModal: false,
   paused: true,
   winningCells: [],
+  gameMode: localStorage.getItem("gameMode") as "player" | "cpu",
+  deActivateBoard: false,
 };
+
+console.log(initialState);
 
 const checkWin = (
   board: (string | null)[][],
@@ -98,10 +118,69 @@ const checkWin = (
   }
   return null;
 };
+
+// computer
+const dropPiece = (
+  board: (string | null)[][],
+  col: number,
+  player: "red" | "yellow",
+): boolean => {
+  for (let row = rows - 1; row >= 0; row--) {
+    if (!board[row][col]) {
+      board[row][col] = player;
+      return true;
+    }
+  }
+  return false;
+};
+
+const findBestMove = (
+  board: (string | null)[][],
+  cpuPlayer: "red" | "yellow",
+  humanPlayer: "red" | "yellow",
+): number | null => {
+  // Try to win
+  for (let col = 0; col < columns; col++) {
+    const simulatedBoard = board.map((row) => [...row]);
+    if (dropPiece(simulatedBoard, col, cpuPlayer)) {
+      if (checkWin(simulatedBoard, cpuPlayer)) {
+        return col; // Winning move
+      }
+    }
+  }
+
+  // Try to block human
+  for (let col = 0; col < columns; col++) {
+    const simulatedBoard = board.map((row) => [...row]);
+    if (dropPiece(simulatedBoard, col, humanPlayer)) {
+      if (checkWin(simulatedBoard, humanPlayer)) {
+        return col; // Blocking move
+      }
+    }
+  }
+
+  // Pick a random valid column
+  const validColumns = [];
+  for (let col = 0; col < columns; col++) {
+    if (!board[0][col]) {
+      validColumns.push(col);
+    }
+  }
+  return validColumns.length > 0
+    ? validColumns[Math.floor(Math.random() * validColumns.length)]
+    : null;
+};
+
+const boardFull = (board: (string | null)[][]): boolean => {
+  return board.every((row) => row.every((cell) => cell !== null));
+};
+// const colFull = (board: (string | null)[][], col: number): boolean => {
+//   return board[0][col] !== null;
+// };
+
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "DROP_PIECE":
-      // const newBoard = [...state.gameBoard];
       const newBoard = state.gameBoard.map((row) => [...row]);
       for (let row = rows - 1; row >= 0; row--) {
         if (!newBoard[row][action.payload]) {
@@ -111,6 +190,7 @@ const reducer = (state: State, action: Action): State => {
       }
       const winningCells = checkWin(newBoard, state.currentPlayer);
       const isWin = winningCells !== null;
+
       const newPlayer1Score =
         isWin && state.currentPlayer === "red"
           ? state.player1Score + 1
@@ -119,19 +199,54 @@ const reducer = (state: State, action: Action): State => {
         isWin && state.currentPlayer === "yellow"
           ? state.player2Score + 1
           : state.player2Score;
+
+      let nextPlayer: "red" | "yellow" =
+        state.currentPlayer === "red" ? "yellow" : "red";
+      if (boardFull(newBoard)) {
+        return {
+          ...state,
+          gameBoard: gameBoardPiece,
+          currentPlayer: nextPlayer,
+          winner: isWin ? state.currentPlayer : null,
+          winningCells: isWin ? winningCells : [],
+          deActivateBoard: true,
+        };
+      }
+
       return {
         ...state,
         gameBoard: newBoard,
-        currentPlayer: isWin
-          ? state.currentPlayer
-          : state.currentPlayer === "red"
-            ? "yellow"
-            : "red",
+        currentPlayer: isWin ? state.currentPlayer : nextPlayer,
         winner: isWin ? state.currentPlayer : null,
         player1Score: newPlayer1Score,
         player2Score: newPlayer2Score,
         paused: false,
         winningCells: isWin ? winningCells : [],
+        deActivateBoard: nextPlayer === "yellow" && state.gameMode === "cpu",
+      };
+
+    case "CPU_MOVE":
+      const { newBoard: updatedBoard, winner, currentPlayer } = action.payload;
+      // const hasWinner = winner !== null && winner !== undefined;
+      if (boardFull(updatedBoard)) {
+        return {
+          ...state,
+          gameBoard: gameBoardPiece,
+          winner: null,
+          winningCells: [],
+          deActivateBoard: true,
+          // paused: false,
+        };
+      }
+      return {
+        ...state,
+        gameBoard: updatedBoard,
+        currentPlayer,
+        winner,
+        winningCells: action.payload.winningCells,
+        player1Score: action.payload.player1Score,
+        player2Score: action.payload.player2Score,
+        deActivateBoard: /*!!winner,*/ false,
       };
 
     case "START_GAME_AGAIN":
@@ -142,6 +257,14 @@ const reducer = (state: State, action: Action): State => {
         winner: null,
         timer: 15,
         winningCells: [],
+        deActivateBoard: false,
+      };
+
+    case "SET_GAME_MODE":
+      localStorage.setItem("gameMode", action.payload);
+      return {
+        ...state,
+        gameMode: action.payload,
       };
 
     case "TIMER":
@@ -161,9 +284,15 @@ const reducer = (state: State, action: Action): State => {
         ...state,
         closeModal: !state.closeModal,
       };
-
-    case "TOGGLE_MODAL":
-
+    case "DEACTIVATE_BOARD":
+      const checkWinner = checkWin(state.gameBoard, state.currentPlayer);
+      if (checkWinner) {
+        return {
+          ...state,
+          deActivateBoard: true,
+        };
+      }
+      return state;
     case "RESET":
       return {
         ...state,
@@ -174,6 +303,7 @@ const reducer = (state: State, action: Action): State => {
         player2Score: 0,
         timer: 15,
         winningCells: [],
+        deActivateBoard: false,
       };
 
     default:
@@ -188,12 +318,47 @@ const Connect4Provider: React.FC<{ children: ReactNode }> = ({ children }) => {
     currentPlayer,
     winner,
     player1Score,
-    timer,
     player2Score,
+    timer,
     closeModal,
     paused,
     winningCells,
+    gameMode,
+    deActivateBoard,
   } = state;
+  useEffect(() => {
+    if (gameMode === "cpu" && currentPlayer === "yellow" && !winner) {
+      const randomTime = Math.floor(Math.random() * 3) + 1;
+      console.log(randomTime);
+      const cpuMoveTimeout = setTimeout(() => {
+        const cpuMove = findBestMove(gameBoard, "yellow", "red");
+        if (cpuMove !== null) {
+          const newBoard = gameBoard.map((row) => [...row]);
+          for (let row = rows - 1; row >= 0; row--) {
+            if (!newBoard[row][cpuMove]) {
+              newBoard[row][cpuMove] = "yellow";
+              break;
+            }
+          }
+          const cpuWinningCells = checkWin(newBoard, "yellow");
+          const cpuIsWin = cpuWinningCells !== null;
+          dispatch({
+            type: "CPU_MOVE",
+            payload: {
+              newBoard,
+              currentPlayer: "red",
+              winner: cpuIsWin ? "yellow" : null,
+              player1Score,
+              player2Score: cpuIsWin ? player2Score + 1 : player2Score,
+              winningCells: cpuIsWin ? cpuWinningCells : [],
+            },
+          });
+        }
+      }, randomTime * 1000); // Delay CPU move by random second
+
+      return () => clearTimeout(cpuMoveTimeout);
+    }
+  }, [gameBoard, currentPlayer, gameMode, winner, player1Score, player2Score]);
   return (
     <Connect4Context.Provider
       value={{
@@ -207,6 +372,8 @@ const Connect4Provider: React.FC<{ children: ReactNode }> = ({ children }) => {
         closeModal,
         paused,
         winningCells,
+        gameMode,
+        deActivateBoard,
       }}
     >
       {children}

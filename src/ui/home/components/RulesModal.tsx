@@ -29,9 +29,9 @@ const RulesModal = () => {
         <Connect4Modal
           title="rules"
           className="flex items-start"
-          modalClassName="bg-white flex relative flex-col items-center py-4 h-[38.7rem] px-4 text-black"
+          modalClassName="bg-white flex relative flex-col items-center md:h-[36.6875rem] md:w-[30rem] py-4 h-[38.7rem] px-4 text-black"
         >
-          <div className="flex flex-col gap-10">
+          <div className="relative flex flex-col gap-10">
             <div className="flex flex-col gap-4">
               <h2 className={h2ClassName}>Objective</h2>
               <p className={summaryClassName}>
@@ -55,7 +55,7 @@ const RulesModal = () => {
             <img
               src="images/icon-check.svg"
               alt="icon-check"
-              className="h-16 -translate-y-3"
+              className="absolute bottom-[-5rem] right-[42%] h-16"
               onClick={handleToggle}
             />
           </div>

@@ -1,64 +1,69 @@
 import { useConnect4 } from "../../../contexts/Connect4Context";
 
 const TurnBackgroundYellow = () => {
-  const { timer } = useConnect4();
+  const { timer, gameMode } = useConnect4();
   return (
     <div className="relative flex flex-col items-center justify-center shadow-[]">
       <svg
         width="197"
         height="165"
+        viewBox="0 0 197 165"
+        fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-        className="drop-shadow-[0px_10px_0px_#000]"
       >
-        <defs>
-          <filter
-            x="-4.2%"
-            y="-4.2%"
-            width="108.4%"
-            height="116.2%"
-            filterUnits="objectBoundingBox"
-            id="a"
-          >
-            <feMorphology
-              radius="3"
-              operator="dilate"
-              in="SourceAlpha"
-              result="shadowSpreadOuter1"
-            />
-            <feOffset
-              dy="10"
-              in="shadowSpreadOuter1"
-              result="shadowOffsetOuter1"
-            />
-            <feComposite
-              in="shadowOffsetOuter1"
-              in2="SourceAlpha"
-              operator="out"
-              result="shadowOffsetOuter1"
-            />
-            <feColorMatrix
-              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"
-              in="shadowOffsetOuter1"
-            />
-          </filter>
+        <g filter="url(#filter0_d_5_3077)">
           <path
-            d="M12.239 34.847 87.279 3.25a20 20 0 0 1 15.454-.029l75.96 31.65A20 20 0 0 1 191 53.333V130c0 11.046-8.954 20-20 20H20c-11.046 0-20-8.954-20-20V53.28a20 20 0 0 1 12.239-18.433Z"
-            id="b"
-          />
-        </defs>
-        <g transform="translate(3 2)" fill="none" fill-rule="evenodd">
-          <use fill="#000" filter="url(#a)" xlinkHref="#b" />
-          <path
-            stroke="#000"
-            stroke-width="3"
-            d="M86.697 1.868a21.5 21.5 0 0 1 16.613-.03l75.96 31.65a21.478 21.478 0 0 1 9.62 7.92 21.478 21.478 0 0 1 3.61 11.925V130a21.433 21.433 0 0 1-6.297 15.203A21.433 21.433 0 0 1 171 151.5H20a21.433 21.433 0 0 1-15.203-6.297A21.433 21.433 0 0 1-1.5 130V53.28c0-4.326 1.296-8.44 3.589-11.893a21.478 21.478 0 0 1 9.568-7.923Z"
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M3 55.2795C3 47.2326 7.82258 39.9694 15.2389 36.8468L90.2793 5.25082C95.2186 3.17114 100.786 3.16075 105.733 5.22198L181.692 36.8718C189.145 39.9772 194 47.2593 194 55.3333V132C194 143.046 185.046 152 174 152H23C11.9543 152 3 143.046 3 132V55.2795Z"
             fill="#FFCE67"
           />
+          <path
+            d="M14.6568 35.4643C6.68427 38.8212 1.5 46.6291 1.5 55.2795V132C1.5 143.874 11.1259 153.5 23 153.5H174C185.874 153.5 195.5 143.874 195.5 132V55.3333C195.5 46.6538 190.281 38.8255 182.269 35.4872L106.31 3.83737C100.992 1.62154 95.0069 1.63271 89.6972 3.86836L14.6568 35.4643Z"
+            stroke="black"
+            stroke-width="3"
+          />
         </g>
+        <defs>
+          <filter
+            id="filter0_d_5_3077"
+            x="0"
+            y="0.683594"
+            width="197"
+            height="164.316"
+            filterUnits="userSpaceOnUse"
+            color-interpolation-filters="sRGB"
+          >
+            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feColorMatrix
+              in="SourceAlpha"
+              type="matrix"
+              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+              result="hardAlpha"
+            />
+            <feOffset dy="10" />
+            <feColorMatrix
+              type="matrix"
+              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"
+            />
+            <feBlend
+              mode="normal"
+              in2="BackgroundImageFix"
+              result="effect1_dropShadow_5_3077"
+            />
+            <feBlend
+              mode="normal"
+              in="SourceGraphic"
+              in2="effect1_dropShadow_5_3077"
+              result="shape"
+            />
+          </filter>
+        </defs>
       </svg>
       <div className="absolute left-0 right-0 top-12 flex flex-col items-center justify-center text-black">
-        <span className="text-lg font-bold uppercase">Player 2's turn</span>
+        <span className="text-lg font-bold uppercase">
+          {gameMode === "player" ? "Player 2's turn" : "cpu's turn"}
+        </span>
         <span className="text-6xl font-bold">{timer}s</span>
       </div>
     </div>

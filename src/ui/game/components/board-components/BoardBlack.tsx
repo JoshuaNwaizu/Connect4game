@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 
-interface BoardBlack {
+export interface BoardBlack {
   children?: ReactNode;
 }
 const BoardBlack: React.FC<BoardBlack> = ({ children }) => {
