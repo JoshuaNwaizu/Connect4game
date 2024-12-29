@@ -34,10 +34,7 @@ const Home = () => {
           <Button className="bg-[#FFCE67] text-black" onClick={playWithPlayer}>
             {" "}
             <p>play vs player</p>
-            <img
-              src="public/images/player-vs-player.svg"
-              alt="play vs player"
-            />
+            <img src="/images/player-vs-player.svg" alt="play vs player" />
           </Button>
 
           <Button className="text-black bg-white" onClick={handleToggle}>
