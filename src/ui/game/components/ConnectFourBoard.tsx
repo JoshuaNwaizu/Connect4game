@@ -106,18 +106,64 @@ const ConnectFourBoard = () => {
         <BoardBlack>
           {gameBoard.map((row, rowIndex) =>
             row.map((cell, colIndex) => (
-              <g
-                className={
-                  isWinningCell(rowIndex, colIndex) ? "winning-animation" : ""
-                }
-                key={`${rowIndex}-${colIndex}`}
-                transform={`translate(${10 + colIndex * 46}, ${
-                  10 + rowIndex * 46
-                })`}
-              >
-                {cell === "red" && <CounterRed />}
-                {cell === "yellow" && <CounterYellow />}
-              </g>
+              <>
+                <g
+                  // className={` ${isWinningCell(rowIndex, colIndex) ? "winning-animation" : ""} relative`}
+                  key={`${rowIndex}-${colIndex}`}
+                  transform={`translate(${10 + colIndex * 46}, ${
+                    10 + rowIndex * 46
+                  })`}
+                >
+                  {cell === "red" && (
+                    <>
+                      <CounterRed />{" "}
+                      {isWinningCell(rowIndex, colIndex) && (
+                        <svg
+                          width="30"
+                          height="30"
+                          className="flex items-center justify-center"
+                          viewBox="0 0 34 34"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <circle
+                            cx="17"
+                            cy="17"
+                            className="translate-x-[.3rem] translate-y-[.3rem]"
+                            r="10"
+                            stroke="white"
+                            strokeWidth="6"
+                          />
+                        </svg>
+                      )}
+                    </>
+                  )}
+                  {cell === "yellow" && (
+                    <>
+                      <CounterYellow />{" "}
+                      {isWinningCell(rowIndex, colIndex) && (
+                        <svg
+                          width="30"
+                          height="30"
+                          className="flex items-center justify-center"
+                          viewBox="0 0 34 34"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <circle
+                            cx="17"
+                            cy="17"
+                            className="translate-x-[.3rem] translate-y-[.3rem]"
+                            r="10"
+                            stroke="white"
+                            strokeWidth="6"
+                          />
+                        </svg>
+                      )}
+                    </>
+                  )}
+                </g>
+              </>
             )),
           )}
         </BoardBlack>
@@ -155,14 +201,39 @@ const ConnectFourBoard = () => {
               <>
                 <g
                   className={
-                    isWinningCell(rowIndex, colIndex) ? "winning-animation" : ""
+                    isWinningCell(rowIndex, colIndex)
+                      ? "winning-animation w-full"
+                      : ""
                   }
                   key={`${rowIndex}-${colIndex}`}
                   transform={`translate(${16 + colIndex * 88}, ${
                     11 + rowIndex * 88
                   })`}
                 >
-                  {cell === "red" && <CounterRedBig />}
+                  {cell === "red" && (
+                    <svg className="w-[5rem]">
+                      <CounterRedBig />
+                      {isWinningCell(rowIndex, colIndex) && (
+                        <svg
+                          width="34"
+                          height="34"
+                          className="z-[99] w-full"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <circle
+                            cx="17"
+                            cy="17"
+                            className="bg-blue-400"
+                            r="14"
+                            stroke="white"
+                            strokeWidth="6"
+                          />
+                        </svg>
+                      )}
+                    </svg>
+                  )}
                   {cell === "yellow" && <CounterYellowBig />}
                 </g>
               </>
