@@ -133,6 +133,39 @@ const dropPiece = (
   }
   return false;
 };
+const checkDiagonalWin = (
+  board: (string | null)[][],
+  player: "red" | "yellow",
+): boolean | undefined => {
+  const rows = board.length;
+  const cols = board[0].length;
+
+  for (let row = 0; row <= rows - 4; row++) {
+    for (let col = 0; col <= cols - 4; col++) {
+      if (
+        board[row][col] === player &&
+        board[row + 1][col + 1] === player &&
+        board[row + 2][col + 2] === player &&
+        board[row + 3][col + 3] === player
+      ) {
+        return true;
+      }
+    }
+  }
+
+  for (let row = 3; row < rows; row++) {
+    for (let col = 0; col <= cols - 4; col++) {
+      if (
+        board[row][col] === player &&
+        board[row - 1][col + 1] === player &&
+        board[row - 2][col + 2] === player &&
+        board[row - 3][col + 3] === player
+      ) {
+        return true;
+      }
+    }
+  }
+};
 
 const evaluateBoard = (
   board: (string | null)[][],
@@ -145,7 +178,10 @@ const evaluateBoard = (
   if (cpuWin) return 100; // CPU wins
   if (humanWin) return -100; // Human wins
 
-  let score = 0;
+  let score: number = 0;
+  // score += checkDiagonalWin(board, cpuPlayer) *10;
+  score += countDiagonalThreats(board, cpuPlayer) * 10;
+  score -= countDiagonalThreats(board, humanPlayer) * 10;
 
   // Add scoring for rows, columns, and diagonals with potential for winning
   for (let row = 0; row < rows; row++) {
@@ -157,9 +193,51 @@ const evaluateBoard = (
       }
     }
   }
-  // console.log(score);
+
   return score;
 };
+function countDiagonalThreats(
+  board: (string | null)[][],
+  player: "red" | "yellow",
+) {
+  let count = 0;
+  const rows = board.length;
+  const cols = board[0].length;
+
+  // Top-left to bottom-right (↘)
+  for (let row = 0; row <= rows - 4; row++) {
+    for (let col = 0; col <= cols - 4; col++) {
+      if (
+        (board[row][col] === player || board[row][col] === null) &&
+        (board[row + 1][col + 1] === player ||
+          board[row + 1][col + 1] === null) &&
+        (board[row + 2][col + 2] === player ||
+          board[row + 2][col + 2] === null) &&
+        (board[row + 3][col + 3] === player || board[row + 3][col + 3] === null)
+      ) {
+        count++;
+      }
+    }
+  }
+
+  // Bottom-left to top-right (↗)
+  for (let row = 3; row < rows; row++) {
+    for (let col = 0; col <= cols - 4; col++) {
+      if (
+        (board[row][col] === player || board[row][col] === null) &&
+        (board[row - 1][col + 1] === player ||
+          board[row - 1][col + 1] === null) &&
+        (board[row - 2][col + 2] === player ||
+          board[row - 2][col + 2] === null) &&
+        (board[row - 3][col + 3] === player || board[row - 3][col + 3] === null)
+      ) {
+        count++;
+      }
+    }
+  }
+
+  return count;
+}
 
 const minimax = (
   board: (string | null)[][],
@@ -188,6 +266,12 @@ const minimax = (
       if (!board[0][col]) {
         const newBoard = board.map((row) => [...row]);
         dropPiece(newBoard, col, cpuPlayer);
+        if (
+          checkWin(newBoard, cpuPlayer) ||
+          checkDiagonalWin(newBoard, cpuPlayer)
+        ) {
+          return { score: 100 - depth, column: col }; // Prioritize winning move
+        }
         const { score } = minimax(
           newBoard,
           depth - 1,
@@ -209,6 +293,12 @@ const minimax = (
       if (!board[0][col]) {
         const newBoard = board.map((row) => [...row]);
         dropPiece(newBoard, col, humanPlayer);
+        if (
+          checkWin(newBoard, cpuPlayer) ||
+          checkDiagonalWin(newBoard, cpuPlayer)
+        ) {
+          return { score: 100 - depth, column: col }; // Prioritize winning move
+        }
         const { score } = minimax(
           newBoard,
           depth - 1,
@@ -231,7 +321,7 @@ const findBestMove = (
   cpuPlayer: "red" | "yellow",
   humanPlayer: "red" | "yellow",
 ): number | null => {
-  const depth = 6; // Increase for harder CPU, decrease for faster responses
+  const depth = 5; // Increase for harder CPU, decrease for faster responses
   const { column } = minimax(board, depth, true, cpuPlayer, humanPlayer);
   return column;
   // Try to win
@@ -284,7 +374,9 @@ const reducer = (state: State, action: Action): State => {
         }
       }
       const winningCells = checkWin(newBoard, state.currentPlayer);
-      const isWin = winningCells !== null;
+      const diagonalWin = checkDiagonalWin(newBoard, state.currentPlayer);
+
+      const isWin = !!diagonalWin || winningCells;
 
       const newPlayer1Score =
         isWin && state.currentPlayer === "red"
@@ -303,7 +395,7 @@ const reducer = (state: State, action: Action): State => {
           gameBoard: gameBoardPiece,
           currentPlayer: nextPlayer,
           winner: isWin ? state.currentPlayer : null,
-          winningCells: isWin ? winningCells : [],
+          winningCells: winningCells || [],
           deActivateBoard: true,
         };
       }
@@ -316,7 +408,9 @@ const reducer = (state: State, action: Action): State => {
         player1Score: newPlayer1Score,
         player2Score: newPlayer2Score,
         paused: false,
-        winningCells: isWin ? winningCells : [],
+        // winningCells: isWin ? winningCells : [],
+        winningCells: winningCells || [],
+
         deActivateBoard: nextPlayer === "yellow" && state.gameMode === "cpu",
       };
 
@@ -448,7 +542,7 @@ const Connect4Provider: React.FC<{ children: ReactNode }> = ({ children }) => {
             },
           });
         }
-      }, randomTime * 1000); // Delay CPU move by random second
+      }, 2000); // Delay CPU move by random second
 
       return () => clearTimeout(cpuMoveTimeout);
     }
