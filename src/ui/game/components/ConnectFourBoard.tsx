@@ -53,7 +53,7 @@ const ConnectFourBoard = () => {
         dispatch({ type: "TIMER", payload: timer - 1 });
       }
     }, 1000);
-    console.log(timer);
+    // console.log(timer);
     return () => clearInterval(interval);
   }, [timer, gameBoard, dispatch, paused]);
 
@@ -248,7 +248,6 @@ const ConnectFourBoard = () => {
             gameMode === "player" ? "/images/player-two.svg" : "/images/cpu.svg"
           }
           points={player2Score}
-          // className="-right-5"
           className="-right-5 lg:-top-5 lg:left-11 lg:right-0"
           scoreClassname="md:order-1 lg:-order-1"
         />

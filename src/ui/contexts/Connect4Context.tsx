@@ -179,6 +179,11 @@ const evaluateBoard = (
   if (humanWin) return -100; // Human wins
 
   let score: number = 0;
+  const centerCol = Math.floor(columns / 2);
+  for (let row = 0; row < rows; row++) {
+    if (board[row][centerCol] === cpuPlayer) score += 3; // Encourage center
+    if (board[row][centerCol] === humanPlayer) score -= 3;
+  }
   // score += checkDiagonalWin(board, cpuPlayer) *10;
   score += countDiagonalThreats(board, cpuPlayer) * 10;
   score -= countDiagonalThreats(board, humanPlayer) * 10;
@@ -321,9 +326,32 @@ const findBestMove = (
   cpuPlayer: "red" | "yellow",
   humanPlayer: "red" | "yellow",
 ): number | null => {
-  const depth = 5; // Increase for harder CPU, decrease for faster responses
+  for (let col = 0; col < columns; col++) {
+    const simulatedBoard = board.map((row) => [...row]);
+    if (dropPiece(simulatedBoard, col, humanPlayer)) {
+      if (checkWin(simulatedBoard, humanPlayer)) {
+        return col; // Blocking move
+      }
+    }
+  }
+  const depth = Math.random() > 0.7 ? 1 : 4; // Increase for harder CPU, decrease for faster responses
   const { column } = minimax(board, depth, true, cpuPlayer, humanPlayer);
+  console.log(depth);
+
+  if (Math.random() > 0.8) {
+    const validColumns = [];
+    for (let col = 0; col < columns; col++) {
+      if (!board[0][col]) validColumns.push(col);
+    }
+    return (
+      validColumns[Math.floor(Math.random() * validColumns.length)] || column
+    );
+  }
+
   return column;
+
+  // return column;
+
   // Try to win
   // for (let col = 0; col < columns; col++) {
   //   const simulatedBoard = board.map((row) => [...row]);
