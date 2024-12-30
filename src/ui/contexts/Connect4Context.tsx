@@ -134,41 +134,136 @@ const dropPiece = (
   return false;
 };
 
+const evaluateBoard = (
+  board: (string | null)[][],
+  cpuPlayer: "red" | "yellow",
+  humanPlayer: "red" | "yellow",
+): number => {
+  const cpuWin = checkWin(board, cpuPlayer);
+  const humanWin = checkWin(board, humanPlayer);
+
+  if (cpuWin) return 100; // CPU wins
+  if (humanWin) return -100; // Human wins
+
+  let score = 0;
+
+  // Add scoring for rows, columns, and diagonals with potential for winning
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < columns; col++) {
+      if (board[row][col] === cpuPlayer) {
+        score += 10; // Favor CPU positions
+      } else if (board[row][col] === humanPlayer) {
+        score -= 10; // Penalize human positions
+      }
+    }
+  }
+  // console.log(score);
+  return score;
+};
+
+const minimax = (
+  board: (string | null)[][],
+  depth: number,
+  isMaximizing: boolean,
+  cpuPlayer: "red" | "yellow",
+  humanPlayer: "red" | "yellow",
+): { score: number; column: number | null } => {
+  const cpuWin = checkWin(board, cpuPlayer);
+  const humanWin = checkWin(board, humanPlayer);
+  if (cpuWin) return { score: 100 - depth, column: null };
+  if (humanWin) return { score: -100 + depth, column: null };
+  if (boardFull(board)) return { score: 0, column: null };
+
+  if (depth === 0) {
+    return {
+      score: evaluateBoard(board, cpuPlayer, humanPlayer),
+      column: null,
+    };
+  }
+
+  if (isMaximizing) {
+    let maxScore = -Infinity;
+    let bestColumn = null;
+    for (let col = 0; col < columns; col++) {
+      if (!board[0][col]) {
+        const newBoard = board.map((row) => [...row]);
+        dropPiece(newBoard, col, cpuPlayer);
+        const { score } = minimax(
+          newBoard,
+          depth - 1,
+          false,
+          cpuPlayer,
+          humanPlayer,
+        );
+        if (score > maxScore) {
+          maxScore = score;
+          bestColumn = col;
+        }
+      }
+    }
+    return { score: maxScore, column: bestColumn };
+  } else {
+    let minScore = Infinity;
+    let bestColumn = null;
+    for (let col = 0; col < columns; col++) {
+      if (!board[0][col]) {
+        const newBoard = board.map((row) => [...row]);
+        dropPiece(newBoard, col, humanPlayer);
+        const { score } = minimax(
+          newBoard,
+          depth - 1,
+          true,
+          cpuPlayer,
+          humanPlayer,
+        );
+        if (score < minScore) {
+          minScore = score;
+          bestColumn = col;
+        }
+      }
+    }
+    return { score: minScore, column: bestColumn };
+  }
+};
+
 const findBestMove = (
   board: (string | null)[][],
   cpuPlayer: "red" | "yellow",
   humanPlayer: "red" | "yellow",
 ): number | null => {
+  const depth = 6; // Increase for harder CPU, decrease for faster responses
+  const { column } = minimax(board, depth, true, cpuPlayer, humanPlayer);
+  return column;
   // Try to win
-  for (let col = 0; col < columns; col++) {
-    const simulatedBoard = board.map((row) => [...row]);
-    if (dropPiece(simulatedBoard, col, cpuPlayer)) {
-      if (checkWin(simulatedBoard, cpuPlayer)) {
-        return col; // Winning move
-      }
-    }
-  }
+  // for (let col = 0; col < columns; col++) {
+  //   const simulatedBoard = board.map((row) => [...row]);
+  //   if (dropPiece(simulatedBoard, col, cpuPlayer)) {
+  //     if (checkWin(simulatedBoard, cpuPlayer)) {
+  //       return col; // Winning move
+  //     }
+  //   }
+  // }
 
   // Try to block human
-  for (let col = 0; col < columns; col++) {
-    const simulatedBoard = board.map((row) => [...row]);
-    if (dropPiece(simulatedBoard, col, humanPlayer)) {
-      if (checkWin(simulatedBoard, humanPlayer)) {
-        return col; // Blocking move
-      }
-    }
-  }
+  // for (let col = 0; col < columns; col++) {
+  //   const simulatedBoard = board.map((row) => [...row]);
+  //   if (dropPiece(simulatedBoard, col, humanPlayer)) {
+  //     if (checkWin(simulatedBoard, humanPlayer)) {
+  //       return col; // Blocking move
+  //     }
+  //   }
+  // }
 
   // Pick a random valid column
-  const validColumns = [];
-  for (let col = 0; col < columns; col++) {
-    if (!board[0][col]) {
-      validColumns.push(col);
-    }
-  }
-  return validColumns.length > 0
-    ? validColumns[Math.floor(Math.random() * validColumns.length)]
-    : null;
+  // const validColumns = [];
+  // for (let col = 0; col < columns; col++) {
+  //   if (!board[0][col]) {
+  //     validColumns.push(col);
+  //   }
+  // }
+  // return validColumns.length > 0
+  // ? validColumns[Math.floor(Math.random() * validColumns.length)]
+  //   : null;
 };
 
 const boardFull = (board: (string | null)[][]): boolean => {

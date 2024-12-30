@@ -37,7 +37,7 @@ const Home = () => {
             <img src="/images/player-vs-player.svg" alt="play vs player" />
           </Button>
 
-          <Button className="text-black bg-white" onClick={handleToggle}>
+          <Button className="bg-white text-black" onClick={handleToggle}>
             <p>game rules</p>
           </Button>
         </div>
