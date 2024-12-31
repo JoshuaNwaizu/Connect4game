@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "./components/Button";
 import RulesModal from "./components/RulesModal";
 import { useConnect4 } from "../contexts/Connect4Context";
+import { AnimatePresence, motion } from "framer-motion";
 
 const Home = () => {
   const { dispatch } = useConnect4();
@@ -21,9 +22,27 @@ const Home = () => {
   return (
     <section className="flex h-svh w-svw flex-col items-center justify-center gap-[4rem] bg-[#5C2DD5]">
       <div className="flex flex-col items-center justify-center gap-[4rem] md:h-[33.6rem] md:w-[30rem] md:rounded-[2.5rem] md:border-[3px] md:border-black md:bg-[#7945FF] md:shadow-[0px_10px_0px_0px_#000]">
-        <div>
+        <motion.div
+          initial={{
+            rotate: "0deg",
+            scale: 0,
+          }}
+          animate={{
+            rotate: "360deg",
+            scale: 1,
+          }}
+          transition={{
+            duration: 1,
+            type: "spring",
+            ease: "backInOut",
+          }}
+          exit={{
+            rotate: "0deg",
+            scale: 0,
+          }}
+        >
           <img src="images/logo.svg" alt="logo" />
-        </div>
+        </motion.div>
 
         <div className="flex flex-col gap-6">
           <Button className="bg-[#FD6687] text-white" onClick={playWithCpu}>
@@ -42,7 +61,9 @@ const Home = () => {
           </Button>
         </div>
       </div>
-      <RulesModal />
+      <AnimatePresence mode="popLayout">
+        <RulesModal />
+      </AnimatePresence>
     </section>
   );
 };

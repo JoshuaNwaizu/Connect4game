@@ -226,7 +226,7 @@ function countDiagonalThreats(
   }
 
   // Bottom-left to top-right (↗)
-  for (let row = 3; row < rows; row++) {
+  for (let row = 4; row < rows; row++) {
     for (let col = 0; col <= cols - 4; col++) {
       if (
         (board[row][col] === player || board[row][col] === null) &&
@@ -302,7 +302,7 @@ const minimax = (
           checkWin(newBoard, cpuPlayer) ||
           checkDiagonalWin(newBoard, cpuPlayer)
         ) {
-          return { score: 100 - depth, column: col }; // Prioritize winning move
+          return { score: 100 + depth, column: col }; // Prioritize winning move
         }
         const { score } = minimax(
           newBoard,
@@ -320,69 +320,190 @@ const minimax = (
     return { score: minScore, column: bestColumn };
   }
 };
-
 const findBestMove = (
   board: (string | null)[][],
   cpuPlayer: "red" | "yellow",
   humanPlayer: "red" | "yellow",
 ): number | null => {
-  for (let col = 0; col < columns; col++) {
-    const simulatedBoard = board.map((row) => [...row]);
-    if (dropPiece(simulatedBoard, col, humanPlayer)) {
-      if (checkWin(simulatedBoard, humanPlayer)) {
-        return col; // Blocking move
+  const columns = board[0].length;
+
+  // Helper to simulate dropping a piece
+  const simulateDrop = (col: number, player: "red" | "yellow"): boolean => {
+    for (let row = board.length - 1; row >= 0; row--) {
+      if (!board[row][col]) {
+        board[row][col] = player;
+        return true;
       }
     }
-  }
-  const depth = Math.random() > 0.7 ? 1 : 4; // Increase for harder CPU, decrease for faster responses
-  const { column } = minimax(board, depth, true, cpuPlayer, humanPlayer);
-  console.log(depth);
+    return false;
+  };
 
-  if (Math.random() > 0.8) {
-    const validColumns = [];
-    for (let col = 0; col < columns; col++) {
-      if (!board[0][col]) validColumns.push(col);
+  // Helper to undo a drop
+  const undoDrop = (col: number): void => {
+    for (let row = 0; row < board.length; row++) {
+      if (board[row][col]) {
+        board[row][col] = null;
+        return;
+      }
     }
-    return (
-      validColumns[Math.floor(Math.random() * validColumns.length)] || column
-    );
+  };
+
+  // Check for winning moves
+  for (let col = 0; col < columns; col++) {
+    if (!board[0][col]) {
+      // Check if CPU can win
+      simulateDrop(col, cpuPlayer);
+      if (checkWin(board, cpuPlayer)) {
+        undoDrop(col);
+        return col; // Winning move
+      }
+      undoDrop(col);
+
+      // Check if Human can win (block them)
+      simulateDrop(col, humanPlayer);
+      if (checkWin(board, humanPlayer)) {
+        undoDrop(col);
+        return col; // Blocking move
+      }
+      undoDrop(col);
+    }
   }
 
-  return column;
+  // Play randomly in valid columns
+  const validColumns: number[] = [];
+  for (let col = 0; col < columns; col++) {
+    if (!board[0][col]) validColumns.push(col);
+  }
+  if (validColumns.length > 0) {
+    return validColumns[Math.floor(Math.random() * validColumns.length)];
+  }
 
-  // return column;
-
-  // Try to win
-  // for (let col = 0; col < columns; col++) {
-  //   const simulatedBoard = board.map((row) => [...row]);
-  //   if (dropPiece(simulatedBoard, col, cpuPlayer)) {
-  //     if (checkWin(simulatedBoard, cpuPlayer)) {
-  //       return col; // Winning move
-  //     }
-  //   }
-  // }
-
-  // Try to block human
-  // for (let col = 0; col < columns; col++) {
-  //   const simulatedBoard = board.map((row) => [...row]);
-  //   if (dropPiece(simulatedBoard, col, humanPlayer)) {
-  //     if (checkWin(simulatedBoard, humanPlayer)) {
-  //       return col; // Blocking move
-  //     }
-  //   }
-  // }
-
-  // Pick a random valid column
-  // const validColumns = [];
-  // for (let col = 0; col < columns; col++) {
-  //   if (!board[0][col]) {
-  //     validColumns.push(col);
-  //   }
-  // }
-  // return validColumns.length > 0
-  // ? validColumns[Math.floor(Math.random() * validColumns.length)]
-  //   : null;
+  return null; // No valid moves
 };
+
+// const findBestMove1 = (
+//   board: (string | null)[][],
+//   cpuPlayer: "red" | "yellow",
+//   humanPlayer: "red" | "yellow",
+// ): number | null => {
+//   // Helper to get a list of valid columns
+//   const getValidColumns = (board: (string | null)[][]): number[] => {
+//     const validColumns: number[] = [];
+//     for (let col = 0; col < columns; col++) {
+//       if (!board[0][col]) validColumns.push(col);
+//     }
+//     return validColumns;
+//   };
+
+//   // Check if a column blocks the player's winning move
+//   const blockPlayerWin = (): number | null => {
+//     for (let col = 0; col < columns; col++) {
+//       const simulatedBoard = board.map((row) => [...row]);
+//       if (dropPiece(simulatedBoard, col, humanPlayer)) {
+//         if (checkWin(simulatedBoard, humanPlayer)) {
+//           return col; // Block this column
+//         }
+//       }
+//     }
+//     return null;
+//   };
+
+//   // Attempt to block player
+//   const blockColumn = blockPlayerWin();
+//   if (blockColumn !== null) return blockColumn;
+
+//   // Make a random move
+//   const validColumns = getValidColumns(board);
+//   if (validColumns.length > 0) {
+//     return validColumns[Math.floor(Math.random() * validColumns.length)];
+//   }
+
+//   return null; // No valid moves left
+// };
+
+// const findBestMove = (
+//   board: (string | null)[][],
+//   cpuPlayer: "red" | "yellow",
+//   humanPlayer: "red" | "yellow",
+// ): number | null => {
+
+//   const validColumns: number[] = [];
+//     for (let col = 0; col < columns; col++) {
+//       if (!board[0][col]) validColumns.push(col);
+//     }
+//     return validColumns;
+//   };
+
+// Check if a column blocks the player's winning move
+// const blockPlayerWin = (): number | null => {
+//   for (let col = 0; col < columns; col++) {
+//     const simulatedBoard = board.map((row) => [...row]);
+//     if (dropPiece(simulatedBoard, col, humanPlayer)) {
+//       if (checkWin(simulatedBoard, humanPlayer)) {
+//         return col; // Block this column
+//       }
+//     }
+//   }
+//   return null;
+
+// for (let col = 0; col < columns; col++) {
+//   const simulatedBoard = board.map((row) => [...row]);
+//   if (dropPiece(simulatedBoard, col, humanPlayer)) {
+//     if (checkWin(simulatedBoard, humanPlayer)) {
+//       return col; // Blocking move
+//     }
+//   }
+// }
+// const depth = Math.random() > 0.7 ? 1 : 3; // Increase for harder CPU, decrease for faster responses
+// const { column } = minimax(board, depth, true, cpuPlayer, humanPlayer);
+// console.log(depth);
+
+// Randomize CPU move
+// if (Math.random() > 0.8) {
+//   const validColumns = [];
+//   for (let col = 0; col < columns; col++) {
+//     if (!board[0][col]) validColumns.push(col);
+//   }
+//   return (
+//     validColumns[Math.floor(Math.random() * validColumns.length)] || column
+//   );
+// }
+
+// return column;
+
+// return column;
+
+// Try to win
+// for (let col = 0; col < columns; col++) {
+//   const simulatedBoard = board.map((row) => [...row]);
+//   if (dropPiece(simulatedBoard, col, cpuPlayer)) {
+//     if (checkWin(simulatedBoard, cpuPlayer)) {
+//       return col; // Winning move
+//     }
+//   }
+// }
+
+// Try to block human
+// for (let col = 0; col < columns; col++) {
+//   const simulatedBoard = board.map((row) => [...row]);
+//   if (dropPiece(simulatedBoard, col, humanPlayer)) {
+//     if (checkWin(simulatedBoard, humanPlayer)) {
+//       return col; // Blocking move
+//     }
+//   }
+// }
+
+// Pick a random valid column
+// const validColumns = [];
+// for (let col = 0; col < columns; col++) {
+//   if (!board[0][col]) {
+//     validColumns.push(col);
+//   }
+// }
+// return validColumns.length > 0
+// ? validColumns[Math.floor(Math.random() * validColumns.length)]
+//   : null;
+// };
 
 const boardFull = (board: (string | null)[][]): boolean => {
   return board.every((row) => row.every((cell) => cell !== null));
