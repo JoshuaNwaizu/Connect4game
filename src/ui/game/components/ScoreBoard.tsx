@@ -15,7 +15,7 @@ const ScoreBoard = () => {
   };
 
   return (
-    <div className="flex justify-around gap-10 md:justify-center lg:hidden">
+    <div className="flex justify-center gap-10 md:justify-center lg:hidden">
       <motion.div
         initial="hidden"
         animate="visible"
