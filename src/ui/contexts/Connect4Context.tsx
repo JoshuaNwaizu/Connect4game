@@ -565,6 +565,7 @@ const reducer = (state: State, action: Action): State => {
 
     case "CPU_MOVE":
       const { newBoard: updatedBoard, winner, currentPlayer } = action.payload;
+      if (state.paused) return { ...state, deActivateBoard: false };
       if (boardFull(updatedBoard)) {
         return {
           ...state,

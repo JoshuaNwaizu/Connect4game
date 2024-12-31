@@ -32,3 +32,34 @@ body {
 .winning-animation {
   animation: pulse 0.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+@keyframes drop {
+  from {
+    transform: translateY(-100px); /* Start above the board */
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0); /* End at the target position */
+    opacity: 1;
+  }
+}
+
+.animate-drop {
+  animation: drop is ease-in-out;
+}
+
+/* Highlight winning cells */
+/* .winning-animation {
+  animation: pulse 1s infinite alternate;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+} */

@@ -35,7 +35,7 @@ const ConnectFourBoard = () => {
   };
 
   useEffect(() => {
-    if (timer === 0 && !winner) {
+    if (!paused && timer === 0 && !winner) {
       const availableColumns = gameBoard[0]
         .map((cell, colIndex) => (cell === null ? colIndex : null))
         .filter((col) => col !== null);
@@ -55,7 +55,7 @@ const ConnectFourBoard = () => {
     }, 1000);
     // console.log(timer);
     return () => clearInterval(interval);
-  }, [timer, gameBoard, dispatch, paused]);
+  }, [timer, gameBoard, dispatch, paused, winner]);
 
   useEffect(() => {
     dispatch({ type: "TIMER", payload: 15 });
@@ -90,6 +90,7 @@ const ConnectFourBoard = () => {
                   r="20"
                   fill="transparent"
                   stroke="transparent"
+                  // onClick={() => handleColumnClick(colIndex)}
                   onClick={() => {
                     if (isColumnFilled(colIndex)) {
                       return;
@@ -140,7 +141,8 @@ const ConnectFourBoard = () => {
                   )}
                   {cell === "yellow" && (
                     <>
-                      <CounterYellow />{" "}
+                      <CounterYellow />
+
                       {isWinningCell(rowIndex, colIndex) && (
                         <svg
                           width="30"

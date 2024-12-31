@@ -1,4 +1,5 @@
 import { useConnect4 } from "../../contexts/Connect4Context";
+import { motion } from "framer-motion";
 
 const menuClassName: string =
   "h-[2.44rem] w-[6.75rem] rounded-[1.25rem] bg-[#5C2DD5] text-base font-bold uppercase";
@@ -12,18 +13,43 @@ const Nav = () => {
   return (
     <nav className="fixed left-0 right-0 top-0 z-50 h-[6rem] bg-[#7945FF] px-4 md:flex md:justify-center">
       <div className="mt-5 flex justify-between md:w-[650px]">
-        <button className={menuClassName} onClick={handleToggleMenu}>
+        <motion.button
+          whileTap={{ scale: 0.95, rotate: "2.5deg" }}
+          whileHover={{ scale: 1.05 }}
+          className={menuClassName}
+          onClick={handleToggleMenu}
+        >
           menu
-        </button>
-        <div>
+        </motion.button>
+        <motion.div
+          initial={{
+            rotate: "0deg",
+            scale: 0,
+          }}
+          animate={{
+            rotate: "360deg",
+            scale: 1,
+          }}
+          transition={{
+            duration: 1,
+            type: "spring",
+            ease: "backInOut",
+          }}
+          exit={{
+            rotate: "0deg",
+            scale: 0,
+          }}
+        >
           <img src="images/logo.svg" alt="logo" />
-        </div>
-        <button
+        </motion.div>
+        <motion.button
+          whileTap={{ scale: 0.95, rotate: "2.5deg" }}
+          whileHover={{ scale: 1.05 }}
           className={menuClassName}
           onClick={() => dispatch({ type: "RESET" })}
         >
           restart
-        </button>
+        </motion.button>
       </div>
     </nav>
   );

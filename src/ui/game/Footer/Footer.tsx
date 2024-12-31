@@ -34,7 +34,6 @@ const Footer = () => {
                   type: "spring",
                   ease: "backInOut",
                 }}
-                exit={{ opacity: 0, rotate: "0deg", scale: 0 }}
               >
                 <TurnRedBackground />
               </motion.div>

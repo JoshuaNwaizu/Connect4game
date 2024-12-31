@@ -1,8 +1,12 @@
-const CounterYellow = () => {
+interface CounterYellowProps {
+  className?: string;
+}
+const CounterYellow: React.FC<CounterYellowProps> = ({ className }) => {
   return (
     <svg
       width="41px"
       height="46px"
+      className={className}
       viewBox="0 0 41 46"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
