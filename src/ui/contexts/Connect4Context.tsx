@@ -381,136 +381,9 @@ const findBestMove = (
   return null; // No valid moves
 };
 
-// const findBestMove1 = (
-//   board: (string | null)[][],
-//   cpuPlayer: "red" | "yellow",
-//   humanPlayer: "red" | "yellow",
-// ): number | null => {
-//   // Helper to get a list of valid columns
-//   const getValidColumns = (board: (string | null)[][]): number[] => {
-//     const validColumns: number[] = [];
-//     for (let col = 0; col < columns; col++) {
-//       if (!board[0][col]) validColumns.push(col);
-//     }
-//     return validColumns;
-//   };
-
-//   // Check if a column blocks the player's winning move
-//   const blockPlayerWin = (): number | null => {
-//     for (let col = 0; col < columns; col++) {
-//       const simulatedBoard = board.map((row) => [...row]);
-//       if (dropPiece(simulatedBoard, col, humanPlayer)) {
-//         if (checkWin(simulatedBoard, humanPlayer)) {
-//           return col; // Block this column
-//         }
-//       }
-//     }
-//     return null;
-//   };
-
-//   // Attempt to block player
-//   const blockColumn = blockPlayerWin();
-//   if (blockColumn !== null) return blockColumn;
-
-//   // Make a random move
-//   const validColumns = getValidColumns(board);
-//   if (validColumns.length > 0) {
-//     return validColumns[Math.floor(Math.random() * validColumns.length)];
-//   }
-
-//   return null; // No valid moves left
-// };
-
-// const findBestMove = (
-//   board: (string | null)[][],
-//   cpuPlayer: "red" | "yellow",
-//   humanPlayer: "red" | "yellow",
-// ): number | null => {
-
-//   const validColumns: number[] = [];
-//     for (let col = 0; col < columns; col++) {
-//       if (!board[0][col]) validColumns.push(col);
-//     }
-//     return validColumns;
-//   };
-
-// Check if a column blocks the player's winning move
-// const blockPlayerWin = (): number | null => {
-//   for (let col = 0; col < columns; col++) {
-//     const simulatedBoard = board.map((row) => [...row]);
-//     if (dropPiece(simulatedBoard, col, humanPlayer)) {
-//       if (checkWin(simulatedBoard, humanPlayer)) {
-//         return col; // Block this column
-//       }
-//     }
-//   }
-//   return null;
-
-// for (let col = 0; col < columns; col++) {
-//   const simulatedBoard = board.map((row) => [...row]);
-//   if (dropPiece(simulatedBoard, col, humanPlayer)) {
-//     if (checkWin(simulatedBoard, humanPlayer)) {
-//       return col; // Blocking move
-//     }
-//   }
-// }
-// const depth = Math.random() > 0.7 ? 1 : 3; // Increase for harder CPU, decrease for faster responses
-// const { column } = minimax(board, depth, true, cpuPlayer, humanPlayer);
-// console.log(depth);
-
-// Randomize CPU move
-// if (Math.random() > 0.8) {
-//   const validColumns = [];
-//   for (let col = 0; col < columns; col++) {
-//     if (!board[0][col]) validColumns.push(col);
-//   }
-//   return (
-//     validColumns[Math.floor(Math.random() * validColumns.length)] || column
-//   );
-// }
-
-// return column;
-
-// return column;
-
-// Try to win
-// for (let col = 0; col < columns; col++) {
-//   const simulatedBoard = board.map((row) => [...row]);
-//   if (dropPiece(simulatedBoard, col, cpuPlayer)) {
-//     if (checkWin(simulatedBoard, cpuPlayer)) {
-//       return col; // Winning move
-//     }
-//   }
-// }
-
-// Try to block human
-// for (let col = 0; col < columns; col++) {
-//   const simulatedBoard = board.map((row) => [...row]);
-//   if (dropPiece(simulatedBoard, col, humanPlayer)) {
-//     if (checkWin(simulatedBoard, humanPlayer)) {
-//       return col; // Blocking move
-//     }
-//   }
-// }
-
-// Pick a random valid column
-// const validColumns = [];
-// for (let col = 0; col < columns; col++) {
-//   if (!board[0][col]) {
-//     validColumns.push(col);
-//   }
-// }
-// return validColumns.length > 0
-// ? validColumns[Math.floor(Math.random() * validColumns.length)]
-//   : null;
-// };
-
 const boardFull = (board: (string | null)[][]): boolean => {
   return board.every((row) => row.every((cell) => cell !== null));
 };
-// const colFull = (board: (string | null)[][], col: number): boolean => {
-//   return board[0][col] !== null;
-// };
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -557,9 +430,7 @@ const reducer = (state: State, action: Action): State => {
         player1Score: newPlayer1Score,
         player2Score: newPlayer2Score,
         paused: false,
-        // winningCells: isWin ? winningCells : [],
         winningCells: winningCells || [],
-
         deActivateBoard: nextPlayer === "yellow" && state.gameMode === "cpu",
       };
 
