@@ -9,6 +9,7 @@ import BoardBlackBig from "./board-components/BoardBlackBig";
 import CounterRedBig from "./board-components/CounterRedBig";
 import CounterYellowBig from "./board-components/CounterYellowBig";
 import ScoreCard from "./ScoreCard";
+import { motion } from "framer-motion";
 
 const ConnectFourBoard = () => {
   const {
@@ -32,6 +33,15 @@ const ConnectFourBoard = () => {
     return winningCells.some(
       (cell) => cell.row === rowIndex && cell.col === colIndex,
     );
+  };
+  const secondCardVariant = {
+    hidden: { x: -70, opacity: 0 },
+    visible: { x: 0, opacity: 1 },
+  };
+
+  const firstCardVariant = {
+    hidden: { x: 70, opacity: 0 },
+    visible: { x: 0, opacity: 1 },
   };
 
   useEffect(() => {
@@ -63,7 +73,14 @@ const ConnectFourBoard = () => {
 
   return (
     <div className="lg:flex lg:items-center lg:justify-center lg:gap-7">
-      <div className="max-lg:hidden">
+      <motion.div
+        variants={secondCardVariant}
+        initial="hidden"
+        animate="visible"
+        transition={{ duration: 0.5, type: "spring" }}
+        // duration={0.5}
+        className="max-lg:hidden"
+      >
         <ScoreCard
           name={gameMode === "player" ? "player1" : "you"}
           img={
@@ -72,7 +89,7 @@ const ConnectFourBoard = () => {
           points={player1Score}
           className="-left-5 lg:-top-5 lg:left-11 lg:right-0"
         />
-      </div>
+      </motion.div>
 
       <div className="relative flex flex-col items-center justify-center sm:hidden">
         <div
@@ -215,25 +232,6 @@ const ConnectFourBoard = () => {
                   {cell === "red" && (
                     <svg className="w-[5rem]">
                       <CounterRedBig />
-                      {isWinningCell(rowIndex, colIndex) && (
-                        <svg
-                          width="34"
-                          height="34"
-                          className="z-[99] w-full"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <circle
-                            cx="17"
-                            cy="17"
-                            className="bg-blue-400"
-                            r="14"
-                            stroke="white"
-                            strokeWidth="6"
-                          />
-                        </svg>
-                      )}
                     </svg>
                   )}
                   {cell === "yellow" && <CounterYellowBig />}
@@ -243,7 +241,13 @@ const ConnectFourBoard = () => {
           )}
         </BoardBlackBig>
       </div>
-      <div className="max-lg:hidden">
+      <motion.div
+        variants={firstCardVariant}
+        initial="hidden"
+        animate="visible"
+        transition={{ duration: 0.5, type: "spring" }}
+        className="max-lg:hidden"
+      >
         <ScoreCard
           name={gameMode === "player" ? "player2" : "cpu"}
           img={
@@ -253,7 +257,7 @@ const ConnectFourBoard = () => {
           className="-right-5 lg:-top-5 lg:left-11 lg:right-0"
           scoreClassname="md:order-1 lg:-order-1"
         />
-      </div>
+      </motion.div>
     </div>
   );
 };

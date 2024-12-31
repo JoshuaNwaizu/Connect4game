@@ -4,6 +4,7 @@ const CounterRed = () => {
       width="41px"
       height="46px"
       viewBox="0 0 41 46"
+      className="animate-bounce"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -56,6 +57,7 @@ const CounterRed = () => {
           <g id="Group-24" transform="translate(211.000000, 160.000000)">
             <g
               id="counter-red-small"
+              className="animate-drop"
               transform="translate(20.975610, 584.975610)"
             >
               <circle
