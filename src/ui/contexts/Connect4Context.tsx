@@ -436,7 +436,14 @@ const reducer = (state: State, action: Action): State => {
 
     case "CPU_MOVE":
       const { newBoard: updatedBoard, winner, currentPlayer } = action.payload;
-      if (state.paused) return { ...state, deActivateBoard: false };
+      // if (state.paused) {
+      //   return {
+      //     ...state,
+      //     deActivateBoard:
+      //       state.currentPlayer === "yellow" && state.gameMode === "cpu",
+      //     paused: false,
+      //   };
+      // }
       if (boardFull(updatedBoard)) {
         return {
           ...state,
@@ -455,7 +462,7 @@ const reducer = (state: State, action: Action): State => {
         winningCells: action.payload.winningCells,
         player1Score: action.payload.player1Score,
         player2Score: action.payload.player2Score,
-        deActivateBoard: /*!!winner,*/ false,
+        deActivateBoard: !!winner,
       };
 
     case "START_GAME_AGAIN":

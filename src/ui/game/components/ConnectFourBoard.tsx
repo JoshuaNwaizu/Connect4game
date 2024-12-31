@@ -45,7 +45,7 @@ const ConnectFourBoard = () => {
   };
 
   useEffect(() => {
-    if (!paused && timer === 0 && !winner) {
+    if (timer === 0 && !winner) {
       const availableColumns = gameBoard[0]
         .map((cell, colIndex) => (cell === null ? colIndex : null))
         .filter((col) => col !== null);

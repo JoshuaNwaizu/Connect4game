@@ -10,7 +10,7 @@ const Home = () => {
   const { dispatch } = useConnect4();
   const navigate = useNavigate();
 
-  playAudio.volume = 0.3;
+  playAudio.volume = 0.1;
 
   const handleToggle = (): void => {
     dispatch({ type: "CLOSE_MODAL" });
