@@ -93,7 +93,7 @@ const ConnectFourBoard = () => {
 
       <div className="relative flex flex-col items-center justify-center sm:hidden">
         <div
-          className={`z-[77] ${!deActivateBoard ? "hidden" : "absolute"} max-sm:h-[19.375rem] max-sm:w-[20.9375rem]`}
+          className={`z-[77] ${!winner && !deActivateBoard ? "hidden" : "absolute"} max-sm:h-[19.375rem] max-sm:w-[20.9375rem]`}
         ></div>
         <BoardWhite>
           {/* Generate Circles for the Board */}
