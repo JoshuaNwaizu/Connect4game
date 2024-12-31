@@ -3,19 +3,28 @@ import { useConnect4 } from "../../contexts/Connect4Context";
 import Button from "../../home/components/Button";
 import Connect4Modal from "./board-components/Connect4Modal";
 import { AnimatePresence, motion } from "framer-motion";
+import { playAudio } from "../../home/Home";
 
 const PauseModal = () => {
   const { dispatch, closeModal } = useConnect4();
   const navigate = useNavigate();
 
+  const restartAudio = () => {
+    playAudio.currentTime = 0; // Restart the sound
+    playAudio.play();
+    playAudio.volume = 0.4;
+  };
   const handleRestart = (): void => {
     dispatch({ type: "CLOSE_MODAL" });
     dispatch({ type: "RESET" });
     dispatch({ type: "TOGGLE_PAUSE", payload: false });
+    restartAudio();
   };
+
   const handleContinue = (): void => {
     dispatch({ type: "CLOSE_MODAL" });
     dispatch({ type: "TOGGLE_PAUSE", payload: false });
+    playAudio.play();
   };
   const handleQuitGame = (): void => {
     dispatch({ type: "CLOSE_MODAL" });

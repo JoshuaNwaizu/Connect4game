@@ -1,5 +1,6 @@
 import { useConnect4 } from "../../contexts/Connect4Context";
 import { motion } from "framer-motion";
+import { playAudio } from "../../home/Home";
 
 const menuClassName: string =
   "h-[2.44rem] w-[6.75rem] rounded-[1.25rem] bg-[#5C2DD5] text-base font-bold uppercase";
@@ -9,6 +10,7 @@ const Nav = () => {
   const handleToggleMenu = () => {
     dispatch({ type: "CLOSE_MODAL" });
     dispatch({ type: "TOGGLE_PAUSE", payload: true });
+    playAudio.pause();
   };
   return (
     <nav className="fixed left-0 right-0 top-0 z-50 h-[6rem] bg-[#7945FF] px-4 md:flex md:justify-center">

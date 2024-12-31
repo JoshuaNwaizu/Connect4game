@@ -3,10 +3,15 @@ import Button from "./components/Button";
 import RulesModal from "./components/RulesModal";
 import { useConnect4 } from "../contexts/Connect4Context";
 import { AnimatePresence, motion } from "framer-motion";
+import sound from "/Redbone__Gloopy____Full_Cover(256k).mp3";
 
+export const playAudio = new Audio(sound);
 const Home = () => {
   const { dispatch } = useConnect4();
   const navigate = useNavigate();
+
+  playAudio.volume = 0.3;
+
   const handleToggle = (): void => {
     dispatch({ type: "CLOSE_MODAL" });
     dispatch({ type: "TOGGLE_PAUSE", payload: false });
@@ -14,10 +19,14 @@ const Home = () => {
   const playWithCpu = (): void => {
     dispatch({ type: "SET_GAME_MODE", payload: "cpu" });
     navigate("/game-page");
+    playAudio.currentTime = 0;
+    playAudio.play();
   };
   const playWithPlayer = (): void => {
     dispatch({ type: "SET_GAME_MODE", payload: "player" });
     navigate("/game-page");
+    playAudio.currentTime = 0;
+    playAudio.play();
   };
   return (
     <section className="flex h-svh w-svw flex-col items-center justify-center gap-[4rem] bg-[#5C2DD5]">
