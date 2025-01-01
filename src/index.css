@@ -32,3 +32,28 @@ body {
 .winning-animation {
   animation: pulse 0.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+#Oval-Copy-48 {
+  transform-origin: center;
+  animation: drop 0.3s ease-out;
+  transition: all 0.2s ease-out;
+}
+
+@keyframes drop {
+  /* from {
+  
+    transform: translateY(-20px);
+  } */
+  0% {
+    transform: translateY(-20px); /* Starting point */
+  }
+  50% {
+    transform: translateY(0); /* Drops to the resting position */
+  }
+  75% {
+    transform: translateY(-10px); /* Bounces slightly up */
+  }
+  100% {
+    transform: translateY(0); /* Settles into the final position */
+  }
+}
