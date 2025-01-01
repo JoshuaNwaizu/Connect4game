@@ -40,20 +40,16 @@ body {
 }
 
 @keyframes drop {
-  /* from {
-  
-    transform: translateY(-20px);
-  } */
   0% {
-    transform: translateY(-20px); /* Starting point */
+    transform: translateY(-60px);
   }
   50% {
-    transform: translateY(0); /* Drops to the resting position */
+    transform: translateY(0);
   }
   75% {
-    transform: translateY(-10px); /* Bounces slightly up */
+    transform: translateY(-13px);
   }
   100% {
-    transform: translateY(0); /* Settles into the final position */
+    transform: translateY(0);
   }
 }
