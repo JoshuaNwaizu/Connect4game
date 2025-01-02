@@ -72,7 +72,7 @@ const CounterYellow: React.FC<CounterYellowProps> = ({ className }) => {
             r="20"
           ></circle>
           <g id="Oval-Copy-48">
-            <use fill="#FFCE67" fill-rule="evenodd" xlinkHref="#path-1"></use>
+            <use fill="#FFCE67" fillRule="evenodd" xlinkHref="#path-1"></use>
             <use
               fill="black"
               fillOpacity="1"

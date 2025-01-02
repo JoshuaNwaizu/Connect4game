@@ -1,5 +1,5 @@
 import React from "react";
-import { WhiteBoard } from "./BoardWhite";
+import { WhiteBoard } from "./board-svgs/BoardWhite";
 
 const BoardWhiteBig: React.FC<WhiteBoard> = ({ onClick, children }) => {
   return (

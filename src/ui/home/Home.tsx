@@ -10,7 +10,7 @@ const Home = () => {
   const { dispatch } = useConnect4();
   const navigate = useNavigate();
 
-  playAudio.volume = 0.1;
+  playAudio.volume = 0.2;
 
   const handleToggle = (): void => {
     dispatch({ type: "CLOSE_MODAL" });
@@ -65,7 +65,7 @@ const Home = () => {
             <img src="/images/player-vs-player.svg" alt="play vs player" />
           </Button>
 
-          <Button className="bg-white text-black" onClick={handleToggle}>
+          <Button className="text-black bg-white" onClick={handleToggle}>
             <p>game rules</p>
           </Button>
         </div>
